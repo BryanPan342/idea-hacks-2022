@@ -1,14 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 import {useSession} from 'next-auth/react';
-import { doc, Firestore, onSnapshot } from "firebase/firestore";
+import DeviceDropdown from '../components/DeviceDropdown';
 import { _Firebase } from '../utils/firebase';
-
-interface FirestoreUser {
-  name: string
-  devices: string[]
-  refresh_token?: string
-}
+import { Firestore } from 'firebase/firestore';
 
 import Grid from '@mui/material/Grid';
 
@@ -27,23 +22,11 @@ export default function Home() {
   const {data: session} = useSession();
   const [firebase] = useState(new _Firebase());
   const [db, setDb] = useState<Firestore | null>(null);
-  const [data, setData] = useState<FirestoreUser | null>(null);
   const [albums, setAlbums] = useState<Album[]>([]);
-
+  
   useEffect(() => {
     setDb(firebase.db);
   }, []);
-
-  useEffect(() => {
-    if (db)
-      onSnapshot(doc(db, "users", "bryanSucks"), (doc) => {
-        console.log("Current data: ", doc.data());
-        setData({
-          name: doc.data().name,
-          devices: doc.data().devices,
-        });
-      });
-  }, [db])
 
   const fetchAlbums = async () => {
     const res = await window.fetch('/api/list-albums');
@@ -66,7 +49,7 @@ export default function Home() {
     <Layout>
       <div id={styles['home-container']}>
         <h2>Hello {session?.user?.name} 👋</h2>
-
+        <DeviceDropdown db={db} />
         <div id={styles['albums-container']}>
           <h3>Albums</h3>
           <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
