@@ -5,7 +5,8 @@ export default function Home(): JSX.Element {
 
   return (
     <Layout>
-      <h1>AURGY</h1>
+      <h1>the boom box</h1>
+      <p>bringing the outdoors indoors</p>
     </Layout>
   );
 }

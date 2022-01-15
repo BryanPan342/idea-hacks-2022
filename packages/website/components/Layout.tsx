@@ -10,7 +10,7 @@ export interface LayoutProps {
 }
 
 function Layout(props: LayoutProps): JSX.Element {
-  const title = capitalize(`${props.title ?? 'the boom box'}`);
+  const title = props.title ?? 'the boom box';
   const description = props.description ?? 'bringing the outdoors indoors';
   return (
     <>
