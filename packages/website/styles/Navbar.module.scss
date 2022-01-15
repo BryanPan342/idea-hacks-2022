@@ -1,0 +1,22 @@
+@use 'variables.module' as *;
+
+#navbar,
+#logo-container,
+#links-container {
+  display: flex;
+  align-items: center;
+}
+
+#navbar {
+  justify-content: space-between;
+  min-height: 72px;
+  width: 100%;
+}
+
+#logo-container {
+  margin-left: $horizontal-margins;
+}
+
+#links-container {
+  margin-right: $horizontal-margins;
+}
