@@ -1,0 +1,14 @@
+@use 'variables.module' as *;
+
+#navbar,
+#logo-container,
+#links-container {
+  display: flex;
+  align-items: center;
+}
+
+#navbar {
+  justify-content: space-between;
+  min-height: 128px;
+  width: 100%;
+}

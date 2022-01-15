@@ -12,6 +12,8 @@ target 'app' do
     :hermes_enabled => false
   )
 
+  pod 'GoogleSignIn', '~> 6.0.2'
+
   target 'appTests' do
     inherit! :complete
     # Pods for testing
