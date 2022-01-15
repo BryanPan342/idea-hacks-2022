@@ -32,16 +32,14 @@ export default function DeviceDropdown(props: DeviceDropdownProps) {
   const onDeviceSelect = (e) => setSelectedDevice(e.value);
 
   return (
-    <>
-      <Dropdown 
-        options={userData?.devices} onChange={onDeviceSelect} value={selectedDevice} placeholder="Select an option" 
-        className="root"
-        controlClassName="control"
-        placeholderClassName="placeholder"
-        menuClassName="menu"
-        arrowClassName="arrow"
-        arrowOpen={<span className="open" />} />
-      <p>{userData?.name}</p>
-    </>
+    <Dropdown 
+      options={userData?.devices} onChange={onDeviceSelect} value={selectedDevice} placeholder="Select an option" 
+      className="root"
+      controlClassName="control"
+      placeholderClassName="placeholder"
+      menuClassName="menu"
+      arrowClassName="arrow"
+      arrowOpen={<span className="open" />} 
+    />
   )
 }
