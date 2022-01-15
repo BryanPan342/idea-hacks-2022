@@ -1,8 +1,9 @@
-import {AppProps} from 'next/app';
+import { AppProps } from 'next/app';
 import React, { createContext, useEffect, useState } from 'react';
 import '../styles/globals.scss';
 import { USER_DATA } from '../utils/storage';
 import { IUserData } from '../utils/user-data';
+import { SessionProvider } from "next-auth/react"
 
 export interface IAppContext {
   userData: IUserData | null,
@@ -18,15 +19,16 @@ export const AppContext = createContext<IAppContext>({
   signOut: () => null,
 });
 
-function MyApp({ Component, pageProps }: AppProps): JSX.Element {
-  const [ userData, setUserData ] = useState<IUserData | null>(null);
-  const [ isAuthenticated, setIsAuthenticated ] = useState(false);
+function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps): JSX.Element {
+  const [userData, setUserData] = useState<IUserData | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     const storage = window.localStorage;
     setUserData(JSON.parse(storage.getItem(USER_DATA)));
 
     const signin = async () => {
+      console.log('signing in');
       setUserData('test');
     };
 
@@ -44,6 +46,7 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
   }, [userData]);
 
   const signOut = () => {
+    console.log('sigining out');
     setUserData(null);
 
     // make doubling work here but making sure this is set to null
@@ -51,14 +54,16 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
   };
 
   return (
-    <AppContext.Provider value={{
-      userData,
-      setUserData,
-      isAuthenticated,
-      signOut,
-    }}>
-      <Component {...pageProps} />
-    </AppContext.Provider>
+    <SessionProvider session={session}>
+      <AppContext.Provider value={{
+        userData,
+        setUserData,
+        isAuthenticated,
+        signOut,
+      }}>
+        <Component {...pageProps} />
+      </AppContext.Provider>
+    </SessionProvider>
   );
 }
 

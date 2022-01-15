@@ -9,6 +9,14 @@
 
 #navbar {
   justify-content: space-between;
-  min-height: 128px;
+  min-height: 72px;
   width: 100%;
+}
+
+#logo-container {
+  margin-left: 32px;
+}
+
+#links-container {
+  margin-right: 32px;
 }

@@ -1,6 +1,8 @@
 import Head from 'next/head';
 import React from 'react';
 import Navbar from './Navbar';
+import SignIn from './SignIn';
+import {useSession} from 'next-auth/react';
 
 export interface LayoutProps {
   children: React.ReactNode;
@@ -10,8 +12,10 @@ export interface LayoutProps {
 }
 
 function Layout(props: LayoutProps): JSX.Element {
+  const {data: session} = useSession();
   const title = props.title ?? 'the boom box';
   const description = props.description ?? 'bringing the outdoors indoors';
+
   return (
     <>
       <Head>
@@ -34,7 +38,7 @@ function Layout(props: LayoutProps): JSX.Element {
       </Head>
       <Navbar />
       <main id={props.id}>
-        {props.children}
+        {session ? props.children : <SignIn />}
       </main>
     </>
   );
