@@ -13,6 +13,9 @@
     "no-lock": "scripts/noPackageLock.sh"
   },
   "dependencies": {
+    "@emotion/react": "^11.7.1",
+    "@emotion/styled": "^11.6.0",
+    "@mui/material": "^5.2.8",
     "firebase": "^9.6.3",
     "next": "10.0.9",
     "next-auth": "^4.1.0",

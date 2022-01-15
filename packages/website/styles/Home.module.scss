@@ -1,0 +1,14 @@
+@use 'variables.module' as *;
+
+#home-container {
+  display: flex;
+  flex-direction: column;
+  padding: 0 $horizontal-margins;
+  min-height: 100vh;
+  width: calc(100% - 2 * $horizontal-margins);
+}
+
+
+#albums-container {
+  margin-top: 32px;
+}
