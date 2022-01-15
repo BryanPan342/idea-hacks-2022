@@ -66,8 +66,6 @@ export default function Home() {
     <Layout>
       <div id={styles['home-container']}>
         <h2>Hello {session?.user?.name} 👋</h2>
-        <p>{session?.user?.email}</p>
-
 
         <div id={styles['albums-container']}>
           <h3>Albums</h3>
