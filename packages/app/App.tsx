@@ -1,115 +1,250 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * Generated with the TypeScript template
- * https://github.com/react-native-community/react-native-template-typescript
- *
- * @format
- */
-
-import React from 'react';
+import React, { Component, useEffect } from 'react';
+import { view } from 'react-native'
 import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+  GoogleSignin,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+export default function App(): JSX.Element {
 
-const Section: React.FC<{
-  title: string;
-}> = ({children, title}) => {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-};
+  useEffect(() => {
+    configureGoogleSignIn();
 
-const App = () => {
-  const isDarkMode = useColorScheme() === 'dark';
+  }, []);
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+
+  function configureGoogleSignIn() { //It is mandatory to call this method before attempting to call signIn()
+    GoogleSignin.configure({
+      scopes: [
+        "openid",
+        "email",
+        "profile",
+        "https://www.googleapis.com/auth/photoslibrary",
+      ],
+      androidClientId: ANDROID_CLIENT_ID,//your android client id from google console
+      iosClientId: IOS_CLIENT_ID,// ios client id from google console
+      offlineAccess: false,
+      hostedDomain: '',
+      accountName: ''
+    });
+  }
+
+  googleLogin = async (type) => { //function to sign in google account
+
+    try {
+
+      await GoogleSignin.hasPlayServices(
+
+        { showPlayServicesUpdateDialog: true }
+
+      );
+
+      const userInfo = await GoogleSignin.signIn();
+
+      const token = await GoogleSignin.getTokens();
+
+      this.setState({ accessToken: token.accessToken });
+
+      this.getGooglePhotos(token.accessToken);
+
+    } catch (error) {
+
+      console.log("error in  singin ");
+
+      console.log(error);
+
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+
+        // sign in was cancelled
+
+        console.log('cancelled');
+
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+
+        // operation in progress already
+
+        console.log('in progress');
+
+      }
+
+      else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+
+        console.log('play services not available or outdated');
+
+      } else {
+
+        console.log('Something went wrong');
+
+        console.log(error.toString());
+
+      }
+
+    }
+
+  }
+
+  signOut = async () => { // function used to sign out
+
+    try {
+
+      await GoogleSignin.revokeAccess();
+
+      await GoogleSignin.signOut();
+
+      return true;
+
+    } catch (error) {
+
+      console.error(error);
+
+    }
+
   };
 
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
+  async getGooglePhotos(accessToken, nextPageToken = null) { //function to get photos after login
+
+    let url = "";
+
+    if (nextPageToken) {
+
+      url = "https://photoslibrary.googleapis.com/v1/mediaItems?pageSize=25&pageToken=" + nextPageToken;
+
+    }
+
+    else {
+
+      url = "https://photoslibrary.googleapis.com/v1/mediaItems?pageSize=25";
+
+    }
+
+    return await fetch(url,
+
+      {
+
+        method: 'GET',
+
+        headers: {
+
+          Accept: 'application/json',
+
+          'Content-Type': 'application/json',
+
+          'Authorization': 'Bearer ' + accessToken,
+
+        },
+
+      })
+
+      .then((response) => response.json())
+
+      .then(async (responseJson) => {
+
+        if (responseJson.mediaItems && responseJson.mediaItems.length > 0) {
+
+          let newArray = [];
+
+          responseJson.mediaItems.map((asset) => {
+
+            let type = asset.mimeType.split('/')[0];
+
+            if (type == 'video') {
+
+              this.getGooglePhotos(this.state.accessToken, responseJson.nextPageToken);
+
+            }
+
+            if (type == 'image') {
+
+              newArray.push(asset);
+
+            }
+
+          });
+
+          var photos = newArray.map((asset) => {
+
+            let type = asset.mimeType.split('/')[0];
+
+            return { ...asset, doc_path: asset.baseUrl };
+
+          });
+
+          this.setState({
+
+            data: [...this.state.data, ...photos], nextGoooglePageToken: responseJson.nextPageToken
+          })
+
+        }
+
+      })
+
+      .catch((error) => {
+
+        console.log("in a catch ");
+
+        console.error(error);
+
+        return error;
+
+      });
+
+    render(){
+
+      return (
+
+        {
+
+          if(this.state.nextGoooglePageToken)
+
+ {
+
+        this.getGooglePhotos(this.state.googleAccessToken, this.state.nextGoooglePageToken);
+
+      }
+
+    }
+  }
+
+  onEndReachedThreshold = { 0.1}
+
+  renderItem = {({ item, index }) => {
+
+    return (
+
+      <View key={index}>
+
+        <ImageBackground
+
           style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-};
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
+            padding: 10,
 
-export default App;
+            height: 131,
+
+            alignItems: 'flex-end',
+
+            justifyContent: 'flex-start',
+
+          }}
+
+          resizeMode='cover' source={{ uri: (item.image_thumbnail_path && item.image_thumbnail_path != '') ? item.image_thumbnail_path : item.doc_path }}>
+
+        </ImageBackground>
+
+      </View>
+
+    )
+
+  }
+
+}
+
+/>
+
+)
+
+}
+
+   }
+
+}
