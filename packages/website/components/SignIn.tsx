@@ -5,7 +5,7 @@ import styles from '../styles/SignIn.module.scss';
 export default function SignIn(): JSX.Element {
   const login = () => {
     void signIn('google', {
-      callbackUrl: 'http://localhost:3000/',
+      callbackUrl: "https://idea-hacks-2022.vercel.app/"
     });
   };
   return (
