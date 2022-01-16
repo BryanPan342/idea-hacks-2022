@@ -9,6 +9,8 @@ const StyledModal = styled(ModalUnstyled)`
   bottom: 0;
   top: 0;
   left: 0;
+  max-width: 75vw;
+  margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
