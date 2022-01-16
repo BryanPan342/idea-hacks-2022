@@ -33,7 +33,7 @@ export default async (req, res) => {
       play_album: body.album.id,
       access_token: accessToken
     },
-    read_mode: true
+    read_mode: false
   }
 
   const deviceDoc = doc(db, 'devices', 'mfrc522');

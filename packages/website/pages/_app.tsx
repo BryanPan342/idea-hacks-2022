@@ -12,6 +12,8 @@ export interface IAppContext {
   isAuthenticated: boolean;
   signOut: () => void;
   firebase: _Firebase;
+  currentDevice: string | null;
+  setCurrentDevice: (val: string) => void;
 }
 
 export const AppContext = createContext<IAppContext>({
@@ -20,12 +22,15 @@ export const AppContext = createContext<IAppContext>({
   isAuthenticated: false,
   signOut: () => null,
   firebase: null,
+  currentDevice: null,
+  setCurrentDevice: () => null
 });
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps): JSX.Element {
   const [userData, setUserData] = useState<IUserData | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [firebase] = useState(new _Firebase());
+  const [currentDevice, setCurrentDevice] = useState<string | null>(null);
 
   useEffect(() => {
     const storage = window.localStorage;
@@ -65,6 +70,8 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps): J
         isAuthenticated,
         signOut,
         firebase,
+        currentDevice,
+        setCurrentDevice
       }}>
         <Component {...pageProps} />
       </AppContext.Provider>

@@ -19,7 +19,7 @@ interface FirestoreUser {
 }
 
 export default function DeviceDropdown() {
-  const { firebase } = useContext(AppContext);
+  const { firebase, setCurrentDevice } = useContext(AppContext);
 
   const [open, setOpen] = useState(false);
 
@@ -80,7 +80,7 @@ export default function DeviceDropdown() {
           displayEmpty
         >
           {(userData?.devices ?? []).map((device) => {
-            return <MenuItem sx={{ font: font['button-text'] }} value={device} key={device}>{device}</MenuItem>;
+            return <MenuItem onClick={() => setCurrentDevice(device)} sx={{ font: font['button-text'] }} value={device} key={device}>{device}</MenuItem>;
           })}
           <MenuItem onClick={handleOpen} value={'➕ Add device'}>
             ➕ Add device
