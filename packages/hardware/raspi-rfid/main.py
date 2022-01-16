@@ -1,7 +1,7 @@
 #!/usr/bin/env/ python
 
-#import RPi.GPIO as GPIO
-#from mfrc522 import SimpleMFRC522
+import RPi.GPIO as GPIO
+from mfrc522 import SimpleMFRC522
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
@@ -26,7 +26,7 @@ while running==True:
     firebase_dict = snapshot.to_dict()
 
     # Get the mode from firebase
-    readMode = firebase_dict['readMode']
+    readMode = firebase_dict['read_mode']
 
     if readMode:
         try:
@@ -35,20 +35,23 @@ while running==True:
             print(text)
 
             # Push to firebase
-            firestore_db.collection(u'devices').update({'read_album': text})
+            firestore_db.collection(u'devices').document(u'mfrc522').update({'recent_tile_id': id})
         finally: 
             GPIO.cleanup()
 
     else:
         try: 
             # Get text from firebase
-            text = firebase_dict['write_album']
+            id, text = reader.read()
+            print('writing tile id', id, 'for display on react')
 
-            print("Waiting for tag: ")
-            reader.write(text)
-            print("Written")
-            
+            payload = firebase_dict['payload']
+            payload['tile_id'] = id
+
+            firestore_db.collection(u'devices').document(u'mfrc522').update({'payload': payload})
+
         finally: 
             GPIO.cleanup()
 
+     # Do our stuff
 
