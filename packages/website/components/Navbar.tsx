@@ -3,11 +3,10 @@ import React from 'react';
 
 import styles from '../styles/Navbar.module.scss';
 import DeviceDropdown from './DeviceDropdown';
-import Link from './Link';
 
 function LogOut(): JSX.Element {
   const logout = () => {
-    signOut();
+    void signOut();
   };
   return (
     <button onClick={logout}>

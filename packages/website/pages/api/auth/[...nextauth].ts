@@ -1,6 +1,5 @@
 import NextAuth from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
-import { signIn } from 'next-auth/react';
 import { _Firebase } from '../../../utils/firebase';
 
 /**
@@ -39,8 +38,6 @@ async function refreshAccessToken(token) {
       refreshToken: refreshedTokens.refresh_token ?? token.refreshToken, // Fall back to old refresh token
     };
   } catch (error) {
-    console.error(error);
-
     return {
       ...token,
       error: 'RefreshAccessTokenError',
@@ -68,7 +65,7 @@ export default NextAuth({
   callbacks: {
     async signIn({user}) {
       const firebase = new _Firebase();
-      firebase.put({
+      void firebase.put({
         path: `users/${user.email}`,
         data: user,
         defaults: {
@@ -102,7 +99,7 @@ export default NextAuth({
       session.token = token;
 
       const firebase = new _Firebase();
-      firebase.put({
+      void firebase.put({
         path: `users/${session.user.email}`,
         data: {
           accessToken: token.accessToken,

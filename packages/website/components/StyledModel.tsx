@@ -1,6 +1,6 @@
 import ModalUnstyled from '@mui/base/ModalUnstyled';
 import { styled } from '@mui/system';
-import { Dispatch, SetStateAction } from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 
 const StyledModal = styled(ModalUnstyled)`
   position: fixed;

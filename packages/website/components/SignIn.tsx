@@ -4,7 +4,7 @@ import styles from '../styles/SignIn.module.scss';
 
 export default function SignIn(): JSX.Element {
   const login = () => {
-    signIn('google', {
+    void signIn('google', {
       callbackUrl: 'http://localhost:3000/',
     });
   };

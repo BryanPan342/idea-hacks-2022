@@ -32,10 +32,6 @@ export default function Home() {
     }
   }, [session]);
 
-  useEffect(() => {
-    console.log(albums);
-  }, [albums]);
-
   const onAlbumClick = async (album: Album) => {
     // if there is no device selected, prompt the user to select the device
 

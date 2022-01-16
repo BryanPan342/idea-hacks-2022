@@ -11,8 +11,7 @@ export default async (req, res) => {
     return res.status(401).end();
   }
   const firebase = new _Firebase();
-  console.log(body);
-  firebase.updateArrayField({path: `users/${session.user.email}`, key: 'devices', value: body.id});
+  void firebase.updateArrayField({path: `users/${session.user.email}`, key: 'devices', value: body.id});
 
   res.status(200).end();
 };

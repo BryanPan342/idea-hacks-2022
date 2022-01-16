@@ -32,7 +32,6 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps): J
     setUserData(JSON.parse(storage.getItem(USER_DATA)));
 
     const signin = async () => {
-      console.log('signing in');
       setUserData('test');
     };
 
@@ -50,7 +49,6 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps): J
   }, [userData]);
 
   const signOut = () => {
-    console.log('sigining out');
     setUserData(null);
 
     // make doubling work here but making sure this is set to null

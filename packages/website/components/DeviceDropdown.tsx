@@ -8,7 +8,6 @@ import { AppContext } from '../pages/_app';
 
 import font from '../styles/_variables.module.scss';
 import styles from '../styles/DeviceDropdown.module.scss';
-import { _Firebase } from '../utils/firebase';
 import Modal from './StyledModel';
 
 interface FirestoreUser {
@@ -30,8 +29,8 @@ export default function DeviceDropdown() {
   useEffect(() => {
     if (!session?.user || !firebase.db) return;
 
-    onSnapshot(doc(firebase.db, 'users', session.user?.email), (doc) => {
-      const data = doc.data() as FirestoreUser;
+    onSnapshot(doc(firebase.db, 'users', session.user?.email), (d) => {
+      const data = d.data() as FirestoreUser;
       setUserData({ ...data });
     });
 
@@ -41,7 +40,7 @@ export default function DeviceDropdown() {
       setUserData({ ...data });
     };
 
-    main();
+    void main();
   }, [firebase, session]);
 
   if (!session) return null;
@@ -51,7 +50,7 @@ export default function DeviceDropdown() {
   const handleClose = () => setOpen(false);
 
   const submit = () => {
-    window.fetch('/api/add-device', {
+    void window.fetch('/api/add-device', {
       method: 'POST',
       body: JSON.stringify({id: textInput}),
     });

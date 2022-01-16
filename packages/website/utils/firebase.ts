@@ -11,10 +11,9 @@ const FIREBASE_PROD = {
   measurementId: 'G-STQYVHZD7X',
 };
 
-const app =
-  !firebase.apps.length
-    ? (firebase.initializeApp(FIREBASE_PROD))
-    : firebase.app();
+!firebase.apps.length
+  ? (firebase.initializeApp(FIREBASE_PROD))
+  : firebase.app();
 
 interface PutFieldProps {
   path: string;
@@ -29,9 +28,11 @@ interface PutProps {
 }
 
 export class _Firebase {
-  public readonly db: Firestore = getFirestore();
+  public readonly db: Firestore;
 
-  constructor() {}
+  constructor() {
+    this.db = getFirestore();
+  }
 
   public doc(path: string) {
     return doc(this.db, path);

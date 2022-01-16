@@ -1,19 +1,10 @@
-import { doc, setDoc, updateDoc } from 'firebase/firestore';
-import { getToken, JWT } from 'next-auth/jwt';
+import { doc, updateDoc } from 'firebase/firestore';
+import { getToken } from 'next-auth/jwt';
 import {getSession} from 'next-auth/react';
-import { Body } from 'node-fetch';
 import { _Firebase } from '../../utils/firebase';
 
 const secret = process.env.SECRET;
 let accessToken;
-
-interface FireStoreDeviceDoc {
-  payload: {
-    access_token: string,
-    play_album: string,
-  }
-  read_mode: boolean
-}
 
 export default async (req, res) => {
   const firebase = new _Firebase();
@@ -39,6 +30,6 @@ export default async (req, res) => {
 
   const deviceDoc = doc(db, 'devices', 'mfrc522');
 
-  updateDoc(deviceDoc, updatedDeviceDoc);
+  void updateDoc(deviceDoc, updatedDeviceDoc);
   return res.status(200).end();
 };
