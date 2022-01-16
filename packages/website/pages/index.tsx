@@ -36,6 +36,22 @@ export default function Home() {
     console.log(albums);
   }, [albums]);
 
+  const onAlbumClick = async (album: Album) => {
+    // if there is no device selected, prompt the user to select the device
+
+    // show the popup modal for instructions to tap the tile to the device
+
+    const res = await window.fetch('/api/update-device-doc', {
+      method: 'POST',
+      body: JSON.stringify({
+        album: album
+      })
+    });
+    if (!res.ok) { return; }
+    
+    // Set state to remove the pop up
+  }
+
   return (
     <Layout>
       <div id={styles['home-container']}>
@@ -46,7 +62,7 @@ export default function Home() {
             {albums.map((album: Album, index) => {
               return (
                 <Grid item xs={2} sm={4} md={4} key={index}>
-                  <div style={{padding: '16px', backgroundColor: 'white'}}>
+                  <div style={{padding: '16px', backgroundColor: 'white', cursor: 'pointer'}} onClick={() => onAlbumClick(album)}>
                     <img src={album.coverPhotoBaseUrl} style={{ width: '100%', height: 'auto'}}/>
                     <h4>{album.title}</h4>
                   </div>

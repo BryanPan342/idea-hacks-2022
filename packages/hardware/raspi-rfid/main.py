@@ -1,5 +1,6 @@
 #!/usr/bin/env/ python
 
+import time
 import RPi.GPIO as GPIO
 from mfrc522 import SimpleMFRC522
 import firebase_admin
@@ -13,8 +14,14 @@ firebase_admin.initialize_app(cred)
 firestore_db = firestore.client()
 
 # Initialize RFID
-reader = SimpleMFRC522()
 
+GPIO.setmode(GPIO.BOARD)
+button_pins = {11:1}
+for pin in button_pins.keys():
+    GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
+
+reader = SimpleMFRC522()
 running = True
 
 while running==True:
@@ -29,29 +36,30 @@ while running==True:
     readMode = firebase_dict['read_mode']
 
     if readMode:
-        try:
-            id, text = reader.read()
-            print(id)
-            print(text)
+        id, text = reader.read()
+        print(id)
+        print(text)
 
-            # Push to firebase
-            firestore_db.collection(u'devices').document(u'mfrc522').update({'recent_tile_id': id})
-        finally: 
-            GPIO.cleanup()
+        # Push to firebase
+        firestore_db.collection(u'devices').document(u'mfrc522').update({'recent_tile_id': id})
 
     else:
-        try: 
-            # Get text from firebase
-            id, text = reader.read()
-            print('writing tile id', id, 'for display on react')
+        # Get text from firebase
+        id, text = reader.read()
+        print('writing tile id', id, 'for display on react')
 
-            payload = firebase_dict['payload']
-            payload['tile_id'] = id
+        payload = firebase_dict['payload']
+        payload['tile_id'] = id
 
-            firestore_db.collection(u'devices').document(u'mfrc522').update({'payload': payload})
+        firestore_db.collection(u'devices').document(u'mfrc522').update({'payload': payload})
 
-        finally: 
-            GPIO.cleanup()
+    # Do our stuff
+    for pin in button_pins.keys():
+        print("test")
+        input_value = GPIO.input(pin)
+        
+        if input_value == False:
+            print("Button:", pin, "was pressed")
+            firestore_db.collection(u'devices').document(u'mfrc522').update({'music': button_pins[pin]})
 
-     # Do our stuff
-
+GPIO.cleanup()
