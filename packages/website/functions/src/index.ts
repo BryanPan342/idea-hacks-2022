@@ -1,5 +1,5 @@
 import * as functions from "firebase-functions";
-import fetch from 'node-fetch';
+import fetch from "node-fetch";
 
 // // Start writing Firebase Functions
 // // https://firebase.google.com/docs/functions/typescript
@@ -11,7 +11,7 @@ interface DeviceDocument {
     tile_id?: string
   } | undefined
   read_mode: boolean | undefined
-  [key: string]: string | {} | undefined
+  [key: string]: any
 }
 
 interface MediaItemSearchData {
@@ -23,21 +23,23 @@ interface MediaItemSearchData {
   nextPageToken: string | undefined
 }
 
-export const deviceMFRC522 = functions.firestore.document('/devices/mfrc522').onUpdate(async (change, _) => {
+export const deviceMFRC522 = functions.firestore.document("/devices/mfrc522").onUpdate(async (change, _) => {
   const newData = <DeviceDocument>(change.after.data());
-  if (newData.payload === undefined) { return; }
+  if (newData.payload === undefined) {
+    return;
+  }
 
-  const { play_album, tile_id, access_token } = newData.payload;
+  const {play_album, tile_id, access_token} = newData.payload;
   if (!tile_id) {
     console.error("no tile id present!");
     return;
   }
 
   let nextPageToken: string | undefined = undefined;
-  let photoURLs: string[] = [];
-  
+  const photoURLs: string[] = [];
+
   do {
-    const photoList = await fetch('https://photoslibrary.googleapis.com/v1/mediaItems:search', {
+    const photoList = await fetch("https://photoslibrary.googleapis.com/v1/mediaItems:search", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${access_token}`,
@@ -45,7 +47,7 @@ export const deviceMFRC522 = functions.firestore.document('/devices/mfrc522').on
       body: JSON.stringify({
         albumId: play_album,
         pageSize: 100,
-        pageToken: nextPageToken
+        pageToken: nextPageToken,
       }),
     });
     const data: MediaItemSearchData = await photoList.json();
@@ -54,23 +56,23 @@ export const deviceMFRC522 = functions.firestore.document('/devices/mfrc522').on
     });
     nextPageToken = data.nextPageToken;
   } while (nextPageToken);
-  
-  // Update the tile document with all photo urls
-  change.after.ref.collection('tiles').doc(tile_id).set({
-      photos: photoURLs,
-    })
-    .catch((error) => {
-      console.error("Error occured while writing photo urls", error)
-    });
 
-  const { payload, ...rest } = newData;
+  // Update the tile document with all photo urls
+  change.after.ref.collection("tiles").doc(tile_id).set({
+    photos: photoURLs,
+  })
+      .catch((error) => {
+        console.error("Error occured while writing photo urls", error);
+      });
+
+  const {payload, ...rest} = newData;
   change.after.ref.set({
-      ...rest,
-      read_mode: false,
-    })
-    .catch((error) => {
-      console.error("Error occured while writing device document", error)
-    });
+    ...rest,
+    read_mode: false,
+  })
+      .catch((error) => {
+        console.error("Error occured while writing device document", error);
+      });
 
   return;
-})
+});
