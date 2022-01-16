@@ -1,16 +1,15 @@
-import { useContext, useEffect, useState } from "react";
-import { useSession } from 'next-auth/react';
-import { doc, onSnapshot } from "firebase/firestore";
-import { _Firebase } from '../utils/firebase';
-import { AppContext } from "../pages/_app";
-
-import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
+import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { useSession } from 'next-auth/react';
+import React, { useContext, useEffect, useState } from 'react';
+import { AppContext } from '../pages/_app';
 
 import font from '../styles/_variables.module.scss';
 import styles from '../styles/DeviceDropdown.module.scss';
-import Modal from "./StyledModel";
+import { _Firebase } from '../utils/firebase';
+import Modal from './StyledModel';
 
 interface FirestoreUser {
   name: string
@@ -31,17 +30,17 @@ export default function DeviceDropdown() {
   useEffect(() => {
     if (!session?.user || !firebase.db) return;
 
-    onSnapshot(doc(firebase.db, "users", session.user?.email), (doc) => {
+    onSnapshot(doc(firebase.db, 'users', session.user?.email), (doc) => {
       const data = doc.data() as FirestoreUser;
       setUserData({ ...data });
     });
-  
+
     const main = async () => {
       const data = await firebase.get({path: `users/${session.user?.email}`});
       if (data === null) return;
       setUserData({ ...data });
     };
-    
+
     main();
   }, [firebase, session]);
 
@@ -55,7 +54,7 @@ export default function DeviceDropdown() {
     window.fetch('/api/add-device', {
       method: 'POST',
       body: JSON.stringify({id: textInput}),
-    })
+    });
     setTextInput('');
     handleClose();
   };
@@ -64,15 +63,15 @@ export default function DeviceDropdown() {
     <>
       <FormControl
         sx={{
-          m: 1,
-          minWidth: '120px',
+          'm': 1,
+          'minWidth': '120px',
           '& .MuiOutlinedInput-root': {
             height: '32px',
             font: font['button-text'],
           },
           '& .MuiSelect-select': {
             minHeight: '0px !important',
-          }
+          },
         }}>
         <Select
           value={selectedDevice}

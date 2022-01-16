@@ -1,8 +1,8 @@
+import Grid from '@mui/material/Grid';
+import {useSession} from 'next-auth/react';
 import React, { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
-import {useSession} from 'next-auth/react';
 
-import Grid from '@mui/material/Grid';
 
 import styles from '../styles/Home.module.scss';
 
@@ -24,7 +24,7 @@ export default function Home() {
     if (!res.ok) { return; }
     const data = await res.json();
     setAlbums(data.albums);
-  }
+  };
 
   useEffect(() => {
     if (session) {
@@ -44,13 +44,13 @@ export default function Home() {
     const res = await window.fetch('/api/update-device-doc', {
       method: 'POST',
       body: JSON.stringify({
-        album: album
-      })
+        album: album,
+      }),
     });
     if (!res.ok) { return; }
-    
+
     // Set state to remove the pop up
-  }
+  };
 
   return (
     <Layout>

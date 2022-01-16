@@ -1,10 +1,10 @@
 import { AppProps } from 'next/app';
 import React, { createContext, useEffect, useState } from 'react';
 import '../styles/globals.scss';
+import { _Firebase } from '../utils/firebase';
 import { USER_DATA } from '../utils/storage';
 import { IUserData } from '../utils/user-data';
-import { _Firebase } from '../utils/firebase';
-import { SessionProvider } from "next-auth/react";
+import { SessionProvider } from 'next-auth/react';
 
 export interface IAppContext {
   userData: IUserData | null,

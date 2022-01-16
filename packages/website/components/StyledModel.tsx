@@ -1,5 +1,5 @@
-import { styled } from '@mui/system';
 import ModalUnstyled from '@mui/base/ModalUnstyled';
+import { styled } from '@mui/system';
 import { Dispatch, SetStateAction } from 'react';
 
 const StyledModal = styled(ModalUnstyled)`
@@ -44,5 +44,5 @@ export default function Modal({ children, open, setOpen }: ModalProps) {
     >
       {children}
     </StyledModal>
-  )
+  );
 }
