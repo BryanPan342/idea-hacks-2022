@@ -14,13 +14,24 @@ export default async (req, res) => {
   const token = await getToken({req, secret});
   accessToken = token.accessToken;
 
-  const albumRes = await fetch('https://photoslibrary.googleapis.com/v1/albums', {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
+  let nextPageToken: string | undefined = undefined;
+  const albums = [];
 
-  const data = await albumRes.json();
+  do {
+    const albumRes = await fetch(
+      `https://photoslibrary.googleapis.com/v1/albums?${nextPageToken ? ('pageToken=' + nextPageToken + '&') : ''}pageSize=50`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      }
+    });
 
-  res.status(200).json({albums: data.albums});
+    const data = await albumRes.json();
+    data.albums?.forEach((album) => {
+      albums.push(album);
+    });
+
+    nextPageToken = data.nextPageToken;
+  } while (nextPageToken);
+
+  res.status(200).json({albums: albums});
 };
