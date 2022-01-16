@@ -35,6 +35,13 @@ export class _Firebase {
     return doc(this.db, path);
   }
 
+  public async get({path}): Promise<any | null> {
+    const docRef = this.doc(path);
+    const item = await getDoc(docRef);
+    if (!item.exists()) return null;
+    return item.data();
+  }
+
   public async put({path, data, defaults = {}}: PutProps): Promise<boolean> {
     const docRef = this.doc(path);
     const item = await getDoc(docRef);

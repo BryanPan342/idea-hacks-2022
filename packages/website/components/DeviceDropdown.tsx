@@ -6,41 +6,17 @@ import { AppContext } from "../pages/_app";
 
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import { styled, Box } from '@mui/system';
-import ModalUnstyled from '@mui/base/ModalUnstyled';
 import Select from '@mui/material/Select';
 
 import font from '../styles/_variables.module.scss';
 import styles from '../styles/DeviceDropdown.module.scss';
+import Modal from "./StyledModel";
 
 interface FirestoreUser {
   name: string
   devices: string[]
   refresh_token?: string
 }
-
-const StyledModal = styled(ModalUnstyled)`
-  position: fixed;
-  z-index: 1300;
-  right: 0;
-  bottom: 0;
-  top: 0;
-  left: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const Backdrop = styled('div')`
-  z-index: -1;
-  position: fixed;
-  right: 0;
-  bottom: 0;
-  top: 0;
-  left: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  -webkit-tap-highlight-color: transparent;
-`;
 
 export default function DeviceDropdown() {
   const { firebase } = useContext(AppContext);
@@ -53,12 +29,21 @@ export default function DeviceDropdown() {
   const [textInput, setTextInput] = useState('');
 
   useEffect(() => {
-    if (!session?.user) return;
+    if (!session?.user || !firebase.db) return;
+
     onSnapshot(doc(firebase.db, "users", session.user?.email), (doc) => {
       const data = doc.data() as FirestoreUser;
       setUserData({ ...data });
     });
-  }, []);
+  
+    const main = async () => {
+      const data = await firebase.get({path: `users/${session.user?.email}`});
+      if (data === null) return;
+      setUserData({ ...data });
+    };
+    
+    main();
+  }, [firebase, session]);
 
   if (!session) return null;
 
@@ -102,13 +87,7 @@ export default function DeviceDropdown() {
           </MenuItem>
         </Select>
       </FormControl>
-      <StyledModal
-        aria-labelledby="unstyled-modal-title"
-        aria-describedby="unstyled-modal-description"
-        open={open}
-        onClose={handleClose}
-        BackdropComponent={Backdrop}
-      >
+      <Modal open={open} setOpen={setOpen}>
         <div id={styles.modal}>
           <h2 id="unstyled-modal-title">Add Device</h2>
           <p id="unstyled-modal-description">Add a device to this account</p>
@@ -121,7 +100,7 @@ export default function DeviceDropdown() {
             </button>
           </div>
         </div>
-      </StyledModal>
+      </Modal>
     </>
   );
 }
