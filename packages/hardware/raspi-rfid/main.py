@@ -1,6 +1,7 @@
 #!/usr/bin/env/ python
 
 import threading
+import os
 import time
 import RPi.GPIO as GPIO
 from mfrc522 import SimpleMFRC522
@@ -31,8 +32,12 @@ def read(firestore_db):
     print(id)
     print(text)
 
-    # Push to firebase
-    firestore_db.collection(u'devices').document(u'mfrc522').update({'recent_tile_id': id})
+    firebase_dict = getFirebaseDict()
+    readMode = firebase_dict['read_mode']
+
+    if readMode == True:
+        # Push to firebase
+        firestore_db.collection(u'devices').document(u'mfrc522').update({'recent_tile_id': id})
 
 def write(firestore_db):
     # Get text from firebase
@@ -40,24 +45,31 @@ def write(firestore_db):
     print('writing tile id', id, 'for display on react')
 
     firebase_dict = getFirebaseDict()
+    readMode = firebase_dict['read_mode']
 
-    payload = firebase_dict['payload']
-    payload['tile_id'] = id
+    if readMode == False:
+        payload = firebase_dict['payload']
+        payload['tile_id'] = id
 
-    firestore_db.collection(u'devices').document(u'mfrc522').update({'payload': payload})
+        firestore_db.collection(u'devices').document(u'mfrc522').update({'payload': payload})
 
 def button1_pressed(channel):
     print("Button 1 pressed")
     firestore_db.collection(u'devices').document(u'mfrc522').update({'music': 1})
+    os.system('aplay ' + audio_path + 'sea.wav')
 def button2_pressed(channel):
     print("Button 2 pressed")
     firestore_db.collection(u'devices').document(u'mfrc522').update({'music': 2})    
+    os.system('aplay ' + audio_path + 'tree.wav')
 def button3_pressed(channel):
     print("Button 3 pressed")
     firestore_db.collection(u'devices').document(u'mfrc522').update({'music': 3})
+    os.system('aplay ' + audio_path + 'waterfall.wav')
 
 if __name__ == '__main__':
     button_pins = {11:1, 13:2, 15:3}
+    global audio_path
+    audio_path = '/home/pi/idea-hacks-2022/packages/hardware/raspi-rfid/'
     setup(button_pins)
     running = True
     firestore_db = firestore.client()
@@ -91,9 +103,9 @@ if __name__ == '__main__':
     doc_watch = doc_ref.on_snapshot(on_snapshot)
 
     while running==True:
+        print("while Loop")
         if readMode:
             read(firestore_db)
         else:
             write(firestore_db)
-
     GPIO.cleanup()
