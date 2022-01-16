@@ -38,11 +38,6 @@ export default async (req, res) => {
 
   const deviceDoc = doc(db, 'devices', 'mfrc522');
 
-  updateDoc(deviceDoc, updatedDeviceDoc)
-    .then(() => {
-      return res.status(200).end();
-    })
-    .catch(() => {
-      return res.status(400).end();
-    })
+  updateDoc(deviceDoc, updatedDeviceDoc);
+  return res.status(200).end();
 };
