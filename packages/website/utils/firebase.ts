@@ -1,5 +1,5 @@
 import firebase from 'firebase/compat/app';
-import { doc, Firestore, getDoc, getFirestore, setDoc, updateDoc } from "firebase/firestore";
+import { arrayUnion, doc, Firestore, getDoc, getFirestore, setDoc, updateDoc } from "firebase/firestore";
 
 const FIREBASE_PROD = {
   apiKey: "AIzaSyCgeY9tB_-okdEw18DWw44WwoPr4SHUfsc",
@@ -16,6 +16,11 @@ const app =
     ? (firebase.initializeApp(FIREBASE_PROD))
     : firebase.app();
 
+interface PutFieldProps {
+  path: string;
+  key: string;
+  value: any;
+}
 
 interface PutProps {
   path: string;
@@ -31,12 +36,26 @@ export class _Firebase {
   }
 
   public async put({path, data, defaults = {}}: PutProps): Promise<boolean> {
-    const item = await getDoc(this.doc(path));
+    const docRef = this.doc(path);
+    const item = await getDoc(docRef);
     const action = item.exists()
-      ? updateDoc(this.doc(path), data)
-      : setDoc(this.doc(path), {...data, ...defaults});
+      ? updateDoc(docRef, data)
+      : setDoc(docRef, {...data, ...defaults});
 
     return action
+      .then(() => {
+        return true;
+      })
+      .catch(() => {
+        return false;
+      });
+  }
+
+  public async updateArrayField({path, key, value}: PutFieldProps): Promise<boolean> {
+    const docRef = this.doc(path);
+    const item = await getDoc(docRef);
+    if (!item.exists) return false;
+    return updateDoc(docRef, {[key]: arrayUnion(value)})
       .then(() => {
         return true;
       })
