@@ -1,5 +1,7 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import { signIn } from "next-auth/react";
+import { _Firebase } from "../../../utils/firebase";
 
 /**
  * Takes a token, and returns a new token with updated
@@ -37,7 +39,7 @@ async function refreshAccessToken(token) {
       refreshToken: refreshedTokens.refresh_token ?? token.refreshToken, // Fall back to old refresh token
     }
   } catch (error) {
-    console.log(error)
+    console.error(error)
 
     return {
       ...token,
@@ -64,6 +66,17 @@ export default NextAuth({
   ],
   secret: process.env.SECRET,
   callbacks: {
+    async signIn({user}) {
+      const firebase = new _Firebase();
+      firebase.put({
+        path: `users/${user.email}`,
+        data: user,
+        defaults: {
+          devices: [],
+        },
+      });
+      return true;
+    },
     async jwt({token, user, account}) {
       // Initial sign in
       if (account && user) {
@@ -77,9 +90,8 @@ export default NextAuth({
 
       // Return previous token if the access token has not expired yet
       if (Date.now() < token.accessTokenExpires) {
-        return token
+        return token;
       }
-
       // Access token has expired, try to update it
       return refreshAccessToken(token)
     },
@@ -89,7 +101,16 @@ export default NextAuth({
       session.error = token.error;
       session.token = token;
 
-      return session
+      const firebase = new _Firebase();
+      firebase.put({
+        path: `users/${session.user.email}`,
+        data: {
+          accessToken: token.accessToken,
+          refreshToken: token.refreshToken,
+        }
+      });
+
+      return session;
     },
   },
 });
