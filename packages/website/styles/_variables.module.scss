@@ -32,6 +32,7 @@ $horizontal-margins: 64px;
 
 // Export to JS
 :export {
+  button-text: $button-text;
   @each $key, $value in $colors {
     #{unquote($key)}: $value;
   }

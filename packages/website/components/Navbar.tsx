@@ -3,6 +3,7 @@ import React from 'react';
 import styles from '../styles/Navbar.module.scss';
 import Link from './Link';
 import { useSession, signOut } from "next-auth/react";
+import DeviceDropdown from './DeviceDropdown';
 
 function LogOut(): JSX.Element {
   const logout = () => {
@@ -20,7 +21,7 @@ export default function Navbar(): JSX.Element {
   return (
     <div id={styles.navbar}>
       <div id={styles['logo-container']}>
-        <Link href='/'>Home</Link>
+        <DeviceDropdown />
       </div>
       <div id={styles['links-container']}>
         {session && <LogOut />}
