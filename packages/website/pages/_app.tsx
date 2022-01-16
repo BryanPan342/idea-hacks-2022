@@ -3,13 +3,15 @@ import React, { createContext, useEffect, useState } from 'react';
 import '../styles/globals.scss';
 import { USER_DATA } from '../utils/storage';
 import { IUserData } from '../utils/user-data';
-import { SessionProvider } from "next-auth/react"
+import { _Firebase } from '../utils/firebase';
+import { SessionProvider } from "next-auth/react";
 
 export interface IAppContext {
   userData: IUserData | null,
   setUserData: (data: IUserData) => void,
   isAuthenticated: boolean;
   signOut: () => void;
+  firebase: _Firebase;
 }
 
 export const AppContext = createContext<IAppContext>({
@@ -17,11 +19,13 @@ export const AppContext = createContext<IAppContext>({
   setUserData: (_data) => null,
   isAuthenticated: false,
   signOut: () => null,
+  firebase: null,
 });
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps): JSX.Element {
   const [userData, setUserData] = useState<IUserData | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [firebase] = useState(new _Firebase());
 
   useEffect(() => {
     const storage = window.localStorage;
@@ -60,6 +64,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps): J
         setUserData,
         isAuthenticated,
         signOut,
+        firebase,
       }}>
         <Component {...pageProps} />
       </AppContext.Provider>
