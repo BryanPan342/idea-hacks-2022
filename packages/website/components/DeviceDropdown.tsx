@@ -1,7 +1,15 @@
-import { useEffect, useState } from "react";
-import { doc, Firestore, onSnapshot } from "firebase/firestore";
+import { useContext, useEffect, useState } from "react";
+import { doc, onSnapshot } from "firebase/firestore";
 import { _Firebase } from '../utils/firebase';
-import Dropdown from 'react-dropdown';
+import { AppContext } from "../pages/_app";
+
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormHelperText from '@mui/material/FormHelperText';
+import FormControl from '@mui/material/FormControl';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+
+import styles from '../styles/_variables.module.scss';
 
 interface FirestoreUser {
   name: string
@@ -9,37 +17,45 @@ interface FirestoreUser {
   refresh_token?: string
 }
 
-interface DeviceDropdownProps {
-  db: Firestore
-}
 
-export default function DeviceDropdown(props: DeviceDropdownProps) {
-  const db = props.db;
+export default function DeviceDropdown() {
+  const {firebase} = useContext(AppContext);
   const [userData, setUserData] = useState<FirestoreUser | null>(null);
   const [selectedDevice, setSelectedDevice] = useState(null);
 
   useEffect(() => {
+    const db = firebase.db;
     if (db)
       onSnapshot(doc(db, "users", "bryanSucks"), (doc) => {
-        console.log("Current data: ", doc.data());
-        setUserData({
-          name: doc.data().name,
-          devices: doc.data().devices,
-        });
+        const data = doc.data() as FirestoreUser;
+        console.log("Current data: ", data);
+        setUserData({ ...data });
       });
-  }, [db])
+  }, [firebase.db])
 
-  const onDeviceSelect = (e) => setSelectedDevice(e.value);
-
+  const onDeviceSelect = (e) => setSelectedDevice(e.target.value);
   return (
-    <Dropdown 
-      options={userData?.devices} onChange={onDeviceSelect} value={selectedDevice} placeholder="Select an option" 
-      className="root"
-      controlClassName="control"
-      placeholderClassName="placeholder"
-      menuClassName="menu"
-      arrowClassName="arrow"
-      arrowOpen={<span className="open" />} 
-    />
-  )
+    <FormControl
+      sx={{
+        m: 1,
+        minWidth: '120px',
+        '& .MuiOutlinedInput-root': {
+          height: '32px',
+          font: styles['button-text'],
+        },
+        '& .MuiSelect-select': {
+          minHeight: '0px !important',
+        }
+    }}>
+      <Select
+        value={selectedDevice}
+        onChange={onDeviceSelect}
+        displayEmpty
+      >
+        {(userData?.devices ?? []).map((device) => {
+          return <MenuItem sx={{font: styles['button-text'] }} value={device}>{device}</MenuItem>;
+        })}
+      </Select>
+    </FormControl>
+  );
 }

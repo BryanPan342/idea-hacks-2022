@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 import {useSession} from 'next-auth/react';
-import DeviceDropdown from '../components/DeviceDropdown';
-import { _Firebase } from '../utils/firebase';
-import { Firestore } from 'firebase/firestore';
 
 import Grid from '@mui/material/Grid';
 
@@ -20,13 +17,7 @@ interface Album {
 
 export default function Home() {
   const {data: session} = useSession();
-  const [firebase] = useState(new _Firebase());
-  const [db, setDb] = useState<Firestore | null>(null);
   const [albums, setAlbums] = useState<Album[]>([]);
-  
-  useEffect(() => {
-    setDb(firebase.db);
-  }, []);
 
   const fetchAlbums = async () => {
     const res = await window.fetch('/api/list-albums');
@@ -49,7 +40,6 @@ export default function Home() {
     <Layout>
       <div id={styles['home-container']}>
         <h2>Hello {session?.user?.name} 👋</h2>
-        <DeviceDropdown db={db} />
         <div id={styles['albums-container']}>
           <h3>Albums</h3>
           <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
@@ -60,7 +50,6 @@ export default function Home() {
                     <img src={album.coverPhotoBaseUrl} style={{ width: '100%', height: 'auto'}}/>
                     <h4>{album.title}</h4>
                   </div>
-
                 </Grid>
               );
             })}
