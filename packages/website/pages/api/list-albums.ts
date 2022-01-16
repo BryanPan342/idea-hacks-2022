@@ -20,10 +20,10 @@ export default async (req, res) => {
   do {
     const albumRes = await fetch(
       `https://photoslibrary.googleapis.com/v1/albums?${nextPageToken ? ('pageToken=' + nextPageToken + '&') : ''}pageSize=50`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      }
-    });
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
 
     const data = await albumRes.json();
     data.albums?.forEach((album) => {
