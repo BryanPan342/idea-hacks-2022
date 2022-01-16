@@ -58,7 +58,7 @@ export const deviceMFRC522 = functions.firestore.document("/devices/mfrc522").on
   } while (nextPageToken);
 
   // Update the tile document with all photo urls
-  change.after.ref.collection("tiles").doc(tile_id).set({
+  change.after.ref.collection("tiles").doc(`${tile_id}`).set({
     photos: photoURLs,
   })
       .catch((error) => {
@@ -68,7 +68,7 @@ export const deviceMFRC522 = functions.firestore.document("/devices/mfrc522").on
   const {payload, ...rest} = newData;
   change.after.ref.set({
     ...rest,
-    read_mode: false,
+    read_mode: true,
   })
       .catch((error) => {
         console.error("Error occured while writing device document", error);

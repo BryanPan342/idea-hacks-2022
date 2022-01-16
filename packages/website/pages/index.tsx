@@ -1,10 +1,13 @@
 import Grid from '@mui/material/Grid';
 import {useSession} from 'next-auth/react';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 
 
 import styles from '../styles/Home.module.scss';
+import Modalstyles from '../styles/DeviceDropdown.module.scss';
+import Modal from '../components/StyledModel';
+import { AppContext } from './_app';
 
 interface Album {
   readonly id: string;
@@ -16,8 +19,11 @@ interface Album {
 }
 
 export default function Home() {
+  const {currentDevice} = useContext(AppContext);
   const {data: session} = useSession();
   const [albums, setAlbums] = useState<Album[]>([]);
+  const [modalContent, setModalContent] = useState<JSX.Element>(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const fetchAlbums = async () => {
     const res = await window.fetch('/api/list-albums');
@@ -34,8 +40,31 @@ export default function Home() {
 
   const onAlbumClick = async (album: Album) => {
     // if there is no device selected, prompt the user to select the device
+    if (!currentDevice)
+    {
+      setModalContent(
+        <div id={Modalstyles.modal}>
+          <h2 id="unstyled-modal-title">No Device Selected</h2>
+          <p id="unstyled-modal-description">
+            Please select a device that you would like to see
+            this album displayed on and then continue!
+          </p>
+        </div>
+      );
+      setModalOpen(true);
+      return;
+    }
 
     // show the popup modal for instructions to tap the tile to the device
+    setModalContent(
+      <div id={Modalstyles.modal}>
+        <h2 id="unstyled-modal-title">Pair this album with a tile!</h2>
+        <p id="unstyled-modal-description">
+          Tap the tile that you would like to pair this album with!
+        </p>
+      </div>
+    )
+    setModalOpen(true);
 
     const res = await window.fetch('/api/update-device-doc', {
       method: 'POST',
@@ -44,9 +73,7 @@ export default function Home() {
       }),
     });
     if (!res.ok) { return; }
-
-    // Set state to remove the pop up
-  };
+  }
 
   return (
     <Layout>
@@ -67,6 +94,9 @@ export default function Home() {
             })}
           </Grid>
         </div>
+        <Modal open={modalOpen} setOpen={setModalOpen}>
+          {modalContent}
+        </Modal>
       </div>
     </Layout>
   );
