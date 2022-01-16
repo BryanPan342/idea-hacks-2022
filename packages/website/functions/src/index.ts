@@ -66,7 +66,7 @@ export const deviceMFRC522 = functions.firestore.document('/devices/mfrc522').on
   const { payload, ...rest } = newData;
   change.after.ref.set({
       ...rest,
-      read_mode: true,
+      read_mode: false,
     })
     .catch((error) => {
       console.error("Error occured while writing device document", error)

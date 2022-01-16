@@ -8,10 +8,10 @@ let accessToken;
 
 interface FireStoreDeviceDoc {
   payload: {
-    read_mode: boolean
     access_token: JWT
     play_album: string
   }
+  read_mode: boolean
 }
 
 export default async (req, res) => {
@@ -30,10 +30,10 @@ export default async (req, res) => {
 
   const updatedDeviceDoc: FireStoreDeviceDoc = {
     payload: {
-      read_mode: false,
       play_album: body.album.id,
       access_token: accessToken
-    }
+    },
+    read_mode: true
   }
 
   const deviceDoc = doc(db, 'devices', 'mfrc522');
