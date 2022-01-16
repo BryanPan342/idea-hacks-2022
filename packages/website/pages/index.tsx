@@ -4,9 +4,9 @@ import React, { useContext, useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 
 
-import styles from '../styles/Home.module.scss';
-import Modalstyles from '../styles/DeviceDropdown.module.scss';
 import Modal from '../components/StyledModel';
+import Modalstyles from '../styles/DeviceDropdown.module.scss';
+import styles from '../styles/Home.module.scss';
 import { AppContext } from './_app';
 
 interface Album {
@@ -49,7 +49,7 @@ export default function Home() {
             Please select a device that you would like to see
             this album displayed on and then continue!
           </p>
-        </div>
+        </div>,
       );
       setModalOpen(true);
       return;
@@ -62,8 +62,8 @@ export default function Home() {
         <p id="unstyled-modal-description">
           Tap the tile that you would like to pair this album with!
         </p>
-      </div>
-    )
+      </div>,
+    );
     setModalOpen(true);
 
     const res = await window.fetch('/api/update-device-doc', {
@@ -73,7 +73,7 @@ export default function Home() {
       }),
     });
     if (!res.ok) { return; }
-  }
+  };
 
   return (
     <Layout>

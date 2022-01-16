@@ -23,7 +23,7 @@ export const AppContext = createContext<IAppContext>({
   signOut: () => null,
   firebase: null,
   currentDevice: null,
-  setCurrentDevice: () => null
+  setCurrentDevice: () => null,
 });
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps): JSX.Element {
@@ -69,7 +69,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps): J
         signOut,
         firebase,
         currentDevice,
-        setCurrentDevice
+        setCurrentDevice,
       }}>
         <Component {...pageProps} />
       </AppContext.Provider>
