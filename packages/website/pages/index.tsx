@@ -81,7 +81,7 @@ export default function Home() {
         <h2>Hello {session?.user?.name} 👋</h2>
         <div id={styles['albums-container']}>
           <h3>Albums</h3>
-          <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
+          <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 2, sm: 8, md: 12 }}>
             {albums.map((album: Album, index) => {
               return (
                 <Grid item xs={2} sm={4} md={4} key={index}>

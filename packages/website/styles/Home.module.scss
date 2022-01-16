@@ -18,3 +18,10 @@
     margin-bottom: 0;
   }
 }
+
+@media only screen and (max-width: 600px) {
+  #home-container {
+    padding: 0 24px;
+    width: calc(100% - 48px);
+  }
+}

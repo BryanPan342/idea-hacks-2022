@@ -20,3 +20,13 @@
 #links-container {
   margin-right: $horizontal-margins;
 }
+
+@media only screen and (max-width: 600px) {
+  #logo-container {
+    margin-left: 24px;
+  }
+
+  #links-container {
+    margin-right: 24px;
+  }
+}
