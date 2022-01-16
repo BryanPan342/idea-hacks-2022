@@ -1,5 +1,6 @@
 #!/usr/bin/env/ python
 
+import time
 import RPi.GPIO as GPIO
 from mfrc522 import SimpleMFRC522
 import firebase_admin
@@ -13,6 +14,10 @@ firebase_admin.initialize_app(cred)
 firestore_db = firestore.client()
 
 # Initialize RFID
+GPIO.setmode(GPIO.BCM)
+button_pins = {17: 1, 11:2, 12:3}
+for pin in button_pins.keys():
+    GPIO.setup(pin, GPIO.IN)
 reader = SimpleMFRC522()
 
 running = True
@@ -53,5 +58,11 @@ while running==True:
         finally: 
             GPIO.cleanup()
 
-     # Do our stuff
+    # Do our stuff
+    for pin in button_pins.keys():
+        input_value = GPIO.input(pin)
+
+        if input_value == False:
+            print("Button:", pin, "was pressed")
+            firestore_db.collection(u'devices').document(u'mfrc522').update({'music': button_pins[pin]})
 
