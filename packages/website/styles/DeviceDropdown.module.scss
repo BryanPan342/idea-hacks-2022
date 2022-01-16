@@ -8,18 +8,15 @@
   width: 400px;
   height: auto;
   min-height: 200px;
-
   background-color: white;
   z-index: 2;
-
   display: flex;
   flex-direction: column;
-
   text-align: center;
-
 
   #input {
     margin-top: 16px;
+
     input {
       width: 250px;
     }

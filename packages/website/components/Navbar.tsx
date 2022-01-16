@@ -1,14 +1,13 @@
+import { useSession, signOut } from 'next-auth/react';
 import React from 'react';
 
 import styles from '../styles/Navbar.module.scss';
-import Link from './Link';
-import { useSession, signOut } from "next-auth/react";
 import DeviceDropdown from './DeviceDropdown';
 
 function LogOut(): JSX.Element {
   const logout = () => {
-    signOut();
-  }
+    void signOut();
+  };
   return (
     <button onClick={logout}>
       log out

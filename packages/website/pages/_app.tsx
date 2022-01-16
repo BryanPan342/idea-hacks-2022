@@ -1,10 +1,10 @@
 import { AppProps } from 'next/app';
 import React, { createContext, useEffect, useState } from 'react';
 import '../styles/globals.scss';
+import { _Firebase } from '../utils/firebase';
 import { USER_DATA } from '../utils/storage';
 import { IUserData } from '../utils/user-data';
-import { _Firebase } from '../utils/firebase';
-import { SessionProvider } from "next-auth/react";
+import { SessionProvider } from 'next-auth/react';
 
 export interface IAppContext {
   userData: IUserData | null,
@@ -23,7 +23,7 @@ export const AppContext = createContext<IAppContext>({
   signOut: () => null,
   firebase: null,
   currentDevice: null,
-  setCurrentDevice: () => null
+  setCurrentDevice: () => null,
 });
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps): JSX.Element {
@@ -37,7 +37,6 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps): J
     setUserData(JSON.parse(storage.getItem(USER_DATA)));
 
     const signin = async () => {
-      console.log('signing in');
       setUserData('test');
     };
 
@@ -55,7 +54,6 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps): J
   }, [userData]);
 
   const signOut = () => {
-    console.log('sigining out');
     setUserData(null);
 
     // make doubling work here but making sure this is set to null
@@ -71,7 +69,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps): J
         signOut,
         firebase,
         currentDevice,
-        setCurrentDevice
+        setCurrentDevice,
       }}>
         <Component {...pageProps} />
       </AppContext.Provider>

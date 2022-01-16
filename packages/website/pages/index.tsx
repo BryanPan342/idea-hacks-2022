@@ -1,12 +1,12 @@
+import Grid from '@mui/material/Grid';
+import {useSession} from 'next-auth/react';
 import React, { useContext, useEffect, useState } from 'react';
 import Layout from '../components/Layout';
-import {useSession} from 'next-auth/react';
 
-import Grid from '@mui/material/Grid';
 
-import styles from '../styles/Home.module.scss';
-import Modalstyles from '../styles/DeviceDropdown.module.scss';
 import Modal from '../components/StyledModel';
+import Modalstyles from '../styles/DeviceDropdown.module.scss';
+import styles from '../styles/Home.module.scss';
 import { AppContext } from './_app';
 
 interface Album {
@@ -30,7 +30,7 @@ export default function Home() {
     if (!res.ok) { return; }
     const data = await res.json();
     setAlbums(data.albums);
-  }
+  };
 
   useEffect(() => {
     if (session) {
@@ -46,10 +46,10 @@ export default function Home() {
         <div id={Modalstyles.modal}>
           <h2 id="unstyled-modal-title">No Device Selected</h2>
           <p id="unstyled-modal-description">
-            Please select a device that you would like to see 
+            Please select a device that you would like to see
             this album displayed on and then continue!
           </p>
-        </div>
+        </div>,
       );
       setModalOpen(true);
       return;
@@ -62,18 +62,18 @@ export default function Home() {
         <p id="unstyled-modal-description">
           Tap the tile that you would like to pair this album with!
         </p>
-      </div>
-    )
+      </div>,
+    );
     setModalOpen(true);
-    
+
     const res = await window.fetch('/api/update-device-doc', {
       method: 'POST',
       body: JSON.stringify({
-        album: album
-      })
+        album: album,
+      }),
     });
     if (!res.ok) { return; }
-  }
+  };
 
   return (
     <Layout>

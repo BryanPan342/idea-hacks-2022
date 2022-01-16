@@ -1,8 +1,8 @@
+import {useSession} from 'next-auth/react';
 import Head from 'next/head';
 import React from 'react';
 import Navbar from './Navbar';
 import SignIn from './SignIn';
-import {useSession} from 'next-auth/react';
 
 export interface LayoutProps {
   children: React.ReactNode;

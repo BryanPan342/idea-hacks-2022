@@ -17,7 +17,7 @@ export default async (req, res) => {
   const albumRes = await fetch('https://photoslibrary.googleapis.com/v1/albums', {
     headers: {
       Authorization: `Bearer ${accessToken}`,
-    }
+    },
   });
 
   const data = await albumRes.json();

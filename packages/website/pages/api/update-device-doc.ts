@@ -1,23 +1,15 @@
-import { doc, setDoc, updateDoc } from 'firebase/firestore';
-import { getToken, JWT } from 'next-auth/jwt';
+import { doc, updateDoc } from 'firebase/firestore';
+import { getToken } from 'next-auth/jwt';
 import {getSession} from 'next-auth/react';
 import { _Firebase } from '../../utils/firebase';
 
 const secret = process.env.SECRET;
 let accessToken;
 
-interface FireStoreDeviceDoc {
-  payload: {
-    access_token: JWT
-    play_album: string
-  }
-  read_mode: boolean
-}
-
 export default async (req, res) => {
   const firebase = new _Firebase();
   const db = firebase.db;
-  
+
   const session = await getSession({ req });
   if (!session) {
     return res.status(403).end();
@@ -28,16 +20,16 @@ export default async (req, res) => {
   const token = await getToken({req, secret});
   accessToken = token.accessToken;
 
-  const updatedDeviceDoc: FireStoreDeviceDoc = {
+  const updatedDeviceDoc = {
     payload: {
       play_album: body.album.id,
-      access_token: accessToken
+      access_token: accessToken,
     },
-    read_mode: false
-  }
+    read_mode: true,
+  };
 
   const deviceDoc = doc(db, 'devices', 'mfrc522');
 
-  updateDoc(deviceDoc, updatedDeviceDoc);
+  void updateDoc(deviceDoc, updatedDeviceDoc);
   return res.status(200).end();
 };
