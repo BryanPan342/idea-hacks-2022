@@ -14,12 +14,25 @@ interface DeviceDocument {
   [key: string]: any
 }
 
+// From: https://developers.google.com/photos/library/reference/rest/v1/mediaItems#MediaItem
+interface MediaItem {
+  id: string,
+  description: string,
+  productUrl: string,
+  baseUrl: string,
+  mimeType: string,
+  mediaMetadata: { 
+    [key: string]: string
+  }
+  contributorInfo: { 
+    [key: string]: string
+  },
+  filename: string
+}
+
+// From: https://developers.google.com/photos/library/reference/rest/v1/mediaItems/search#response-body
 interface MediaItemSearchData {
-  mediaItems?: [
-    {
-      [key: string]: string
-    }
-  ]
+  mediaItems?: MediaItem[]
   nextPageToken: string | undefined
 }
 
@@ -52,7 +65,9 @@ export const deviceMFRC522 = functions.firestore.document("/devices/mfrc522").on
     });
     const data: MediaItemSearchData = await photoList.json();
     data.mediaItems?.forEach((item) => {
-      photoURLs.push(item.baseUrl);
+      // Only add images
+      if (item.mimeType.startsWith('image/'))
+        photoURLs.push(item.baseUrl);
     });
     nextPageToken = data.nextPageToken;
 
