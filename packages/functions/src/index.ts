@@ -8,7 +8,7 @@ interface DeviceDocument {
   payload: {
     access_token: string
     play_album: string
-    tile_id?: string | number
+    tile_id?: string
   } | undefined
   read_mode: boolean | undefined
   [key: string]: any
@@ -50,16 +50,11 @@ export const deviceMFRC522 = functions.firestore.document("/devices/mfrc522").on
         pageToken: nextPageToken,
       }),
     });
-    const data = <MediaItemSearchData>(await photoList.json());
+    const data: MediaItemSearchData = await photoList.json();
     data.mediaItems?.forEach((item) => {
       photoURLs.push(item.baseUrl);
     });
     nextPageToken = data.nextPageToken;
-
-    // Max allowed document size if 1MB which is ~1400 urls
-    if (photoURLs.length > 1200) {
-      break;
-    }
   } while (nextPageToken);
 
   // Update the tile document with all photo urls
