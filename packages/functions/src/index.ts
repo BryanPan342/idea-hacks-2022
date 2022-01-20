@@ -55,6 +55,9 @@ export const deviceMFRC522 = functions.firestore.document("/devices/mfrc522").on
       photoURLs.push(item.baseUrl);
     });
     nextPageToken = data.nextPageToken;
+
+    // Max document size limit is 1MB which is ~1000 photo media links
+    if (photoURLs.length > 1000) break;
   } while (nextPageToken);
 
   // Update the tile document with all photo urls
